@@ -188,7 +188,7 @@ reduce_lr_val = ReduceLROnPlateau(monitor='val_loss', factor=0.1,
                    patience=15, min_lr=0.001, verbose = 1)          ##This callback monitors a quantity and if no improvement is seen for a 'patience' number of epochs, the learning rate is reduced by a 										certain factor until a minimum value.
            
 
-filepath="/home/users/camilla/BIRADS_crop/Senograph53/18DICEMBRE2019/1/weights-improvement-{epoch:02d}-{val_acc:.2f}.h5"         #Path to save the model file
+filepath="CC_R_model/weights-improvement-{epoch:02d}-{val_acc:.2f}.h5"         #Path to save the model file
 checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')                          #Callback to save the Keras model or model weights at some frequency.
 callbacks_list = [checkpoint]
 
@@ -217,7 +217,7 @@ val_datagen = ImageDataGenerator(
    
 
 train_generator = train_datagen.flow_from_directory(                                            #Takes the path to a directory and generates batches of augmented data.
-        '/arinas/Radioma_AOUP_fixed/camilla/dati_camilla/SEN_5354_muscleremoved/CC_R/train',   #Insert your own path to the directory containing the training set of images of the selected projection. This 													model is trained on a single projection at a time. In this example we train the model on the CC_R 													projection. Then train the model separately on the other projections (CC_L, MLO_R, MLO_L). 										
+        '/TrainingSet/CC_R/train',   #Insert your own path to the directory containing the training set of images of the selected projection. This 													model is trained on a single projection at a time. In this example we train the model on the CC_R 													projection. Then train the model separately on the other projections (CC_L, MLO_R, MLO_L). 										
         batch_size = batch_size,
         target_size=(img_width, img_height),
         color_mode = 'rgb',     #If you set the number of channels to 3, you have to set color_mode ='rgb', when you use 1 single channel, you have to set color_mode = 'grayscale'.
@@ -225,14 +225,14 @@ train_generator = train_datagen.flow_from_directory(                            
         class_mode='categorical')
 
 validation_generator = val_datagen.flow_from_directory(
-        '/arinas/Radioma_AOUP_fixed/camilla/dati_camilla/SEN_5354_muscleremoved/CC_R/validation', #Insert your own path to the directory containing the validation set of images of the selected projection (e.g.CC_R)
+        '/ValidationSet/CC_R/validation', #Insert your own path to the directory containing the validation set of images of the selected projection (e.g.CC_R)
         batch_size = batch_size,
         target_size=(img_width, img_height),
         color_mode = 'rgb',
         shuffle = True,
         class_mode='categorical')
 
-tensorboard = TensorBoard(log_dir="/home/users/camilla/BIRADS_crop/Senograph53/18DICEMBRE2019/1/logs/{}".format(time()), histogram_freq=0, batch_size=4, write_grads=True, write_images=True)   #This is 															optional. It enables visualizations for TensorBoard, a visualization tool provided with 															TensorFlow. It could be useful to visualize the model graph to check that the 																trained model’s structure matches our intended design, if the layers are built 																correctly and the shapes of inputs and outputs of the nodes are those expected. 															Insert tensorboard as callback in model.fit_generator. After training, if you have 																installed TensorFlow with pip, you should be able to launch TensorBoard from the 																command line: tensorboard --logdir=path_to_your_logs
+tensorboard = TensorBoard(log_dir="CC_R_model/logs/{}".format(time()), histogram_freq=0, batch_size=4, write_grads=True, write_images=True)   #This is 															optional. It enables visualizations for TensorBoard, a visualization tool provided with 															TensorFlow. It could be useful to visualize the model graph to check that the 																trained model’s structure matches our intended design, if the layers are built 																correctly and the shapes of inputs and outputs of the nodes are those expected. 															Insert tensorboard as callback in model.fit_generator. After training, if you have 																installed TensorFlow with pip, you should be able to launch TensorBoard from the 																command line: tensorboard --logdir=path_to_your_logs
 
 model.compile(optimizer='sgd',                    #Configures the model for training.
               loss='categorical_crossentropy',
@@ -246,11 +246,11 @@ history = model.fit_generator(train_generator,    #Fits the model on data yielde
           callbacks=[reduce_lr_val, checkpoint, tensorboard])
 
 
-np.savetxt('/home/users/camilla/BIRADS_crop/Senograph53/18DICEMBRE2019/1/loss_train.txt', history.history['loss'], delimiter=",")
-np.savetxt('/home/users/camilla/BIRADS_crop/Senograph53/18DICEMBRE2019/1/acc_train.txt', history.history['acc'], delimiter=",")
-np.savetxt('/home/users/camilla/BIRADS_crop/Senograph53/18DICEMBRE2019/1/loss_val.txt', history.history['val_loss'], delimiter=",")
-np.savetxt('/home/users/camilla/BIRADS_crop/Senograph53/18DICEMBRE2019/1/acc_val.txt', history.history['val_acc'], delimiter=",")
+np.savetxt('CC_R_model/loss_train.txt', history.history['loss'], delimiter=",")
+np.savetxt('CC_R_model/acc_train.txt', history.history['acc'], delimiter=",")
+np.savetxt('CC_R_model/loss_val.txt', history.history['val_loss'], delimiter=",")
+np.savetxt('CC_R_model/acc_val.txt', history.history['val_acc'], delimiter=",")
 
 
-model.save('/home/users/camilla/BIRADS_crop/Senograph53/18DICEMBRE2019/1/final_weights.h5')
+model.save('CC_R_model/final_weights.h5')
 
