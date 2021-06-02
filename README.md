@@ -3,7 +3,8 @@
 
 ### Software and tools
 
-| ----------------------- | ----------------------- |
+| intesta | intesta |
+| -------------- | -------------- |
 | **Programming Language** | Python |
 | **ML Toolset** | Keras, Tensorflow |
 | **Additional libraries** | sklearn, pandas, OpenCv |
