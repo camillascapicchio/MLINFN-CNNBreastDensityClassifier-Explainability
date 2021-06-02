@@ -20,7 +20,7 @@ Deep neural network explainability is a critical issue in Artificial Intelligenc
 
 A full explanation of this use case is available at the following [link](https://confluence.infn.it/display/MLINFN/Explainability+of+a+CNN+classifier+for+breast+density+assessment).
 
-![Explainability image](myproject/Figures/explainability.png)
+![Explainability image](https://github.com/camillascapicchio/MLINFN-CNNBreastDensityClassifier-Explainability/blob/main/myproject/Figures/explainability.png)
 
 ### How to execute the example in this GitHub repo
 
