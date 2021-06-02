@@ -3,16 +3,15 @@
 
 ### Software and tools
 
-| intesta | intesta |
-| -------------- | -------------- |
-| **Programming Language** | Python |
-| **ML Toolset** | Keras, Tensorflow |
-| **Additional libraries** | sklearn, pandas, OpenCv |
+| Programming Language | ML Toolset | Additional libraries
+| -------------- | -------------- | -------------- |
+| Python | Keras, Tensorflow | sklearn, pandas, OpenCv |
 
 ### Needed dataset
 
-| ------------ | ------------- |
-| **Data Type** | Preprocessed Mammographic Images |
+| Data Type |
+| ------------ | 
+| Preprocessed Mammographic Images |
 
 ### Short Description of the Use Case
 
