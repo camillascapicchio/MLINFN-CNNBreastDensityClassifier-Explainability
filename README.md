@@ -3,7 +3,7 @@
 
 ### Software and tools
 
-| Programming Language | ML Toolset | Additional libraries
+| Programming Language | ML Toolset | Additional libraries |
 | -------------- | -------------- | -------------- |
 | Python | Keras, Tensorflow | sklearn, pandas, OpenCv |
 
