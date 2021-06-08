@@ -29,5 +29,5 @@ model.compile(loss='categorical_crossentropy',     #Configures the model for tes
               optimizer='rmsprop',
               metrics=['accuracy'])
 classes = model.predict_generator(test_generator, 128)        #Generates predictions for the input samples from a data generator. 128 is the number of test images. Change it with the number of your images.
-print classes, classes.shape, np.argmax(classes, axis = 1)         #Classes is a tensor of size (number of test images x 4), in each row there is the probability of each of the 4 classes for that image.
+print(classes, classes.shape, np.argmax(classes, axis = 1))       #Classes is a tensor of size (number of test images x 4), in each row there is the probability of each of the 4 classes for that image.
 np.savetxt('/Predictions/predictions_ccr.txt', classes)    #Save the results of prediction as a .txt file.
