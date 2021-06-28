@@ -26,17 +26,19 @@ A full explanation of this use case is available at the following [link](https:/
 
 You need Jupyter notebook as well as all the Python packages necessary to run it.
 
-In the folder “*myproject*” you can find all the useful scripts.
+In the folder “myproject” you can find all the useful scripts: 
 
-1) The python scripts *.py* to train and test the CNN requires as hardware:
+1) The first script Train_ResNet.py is the script to train the CNN. Since a good performance requires a training on at least 1000 images, the training of each network requires at least 1xGPU nVidia Tesla K80 as hardware and the training requires about 24h to be completed.
 
-    CPUs: 2x 10 cores Intel Xeon E5-2640v4 @2.40 GHz
-    RAM: 64 GB
-    GPUs: 8x nVidia Tesla K80, with 2x GPUs Tesla GK210, 24 GB RAM and 2496 CUDA cores each
+2) The second script in python Prediction_ResNet.py is to test the model. It can also be run locally on a common hardware but paying attention to use the same virtual environment used for the training, because you need the same version of the packages to be sure that the algorithm is compatible and reliable.
 
-The training requires about 24h to be completed.
+3-4) The third and fourth scripts Figure_merit.ipynb and ClassActivationMaps.ipynb are Jupiter notebooks, the first is to obtain the figures of merit, the second to generate the Class Activation Maps. They can be run on Google CoLab or you can clone the GitHub repo and execute the notebook locally.
 
-2) The scripts in Jupiter notebooks can be run on Google CoLab or you can clone the GitHub repo and execute the notebook locally.
+The software package is designed for a double purpose:
+
+*   since our private dataset cannot be shared and given the difficulty in finding public medical imaging data in mammography, we share the software to encourage other users to use their own datasets. Therefore, if the user has his own training dataset and the required hardware available, the training can be run. The details of our dataset and our results can be used as a benchmark. This could be fundamental to evaluate the robustness of the model on a different dataset and check the reproducibility of the algorithms.
+*   the other option, if a huge dataset and the hardware are not available, is to use this software package as a tutorial in the field of Medical Physics, useful to learn how to build a CNN classifier, test it, and especially generate the activation maps to understand the reasons behind the predictions, for which a standard method is currently non-existent. In this case, the first training script can be used just to visualize how the model is built without running it. While the next scripts, from the test of the model to the maps generation (from 2 to 4), can be run by using the few examples of preprocessed mammographic images we uploaded on GitHub repository, which can be used as test images, together with some files containing the weights of a pre-trained model, to test the functioning of the software.
+
 
 ### Annotated Description
 
