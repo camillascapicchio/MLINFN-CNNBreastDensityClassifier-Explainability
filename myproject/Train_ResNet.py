@@ -20,11 +20,23 @@ from time import time
 
 
 
-seed(1)   	#Neural network algorithms are stochastic. This means they make use of randomness, such as initializing to random weights, and in turn the same network trained on the same data can produce different results. You can seed the random number generator so that you can get the same results from the same network on the same data, every time. The seed() method is used to initialize the random number generator, which needs a number to start with (a seed value). This specified seed value, such as “1”, ensures that the same sequence of random numbers is generated each time the code is run.
-batch_size = 4   #The training is performed in batches of four images. This means that four images are forward fed into the network and then the gradient is computed. Training a network with batches helps in reducing training time to the detriment of the accuracy. In this specific case we have about 1000 images, which is not a huge number to train this network. So, mini-batches of four images is an optimal value to accelerate the training. If you have a different number of training images try to change the size of the mini-batch.
-img_height = 650  #A CNN requires a fixed input image size. This is the image size that gave us the best accuracy results with our training dataset. If you have your own dataset you can try other image sizes to study how the accuracy varies with the image dimension. You can increase the image size and improve the image resolution, but paying attention to the limits of the GPUs RAM.
+seed(1)   	#Neural network algorithms are stochastic. This means they make use of randomness, such as initializing to random weights, 
+		#and in turn the same network trained on the same data can produce different results. You can seed the random number generator 
+		#so that you can get the same results from the same network on the same data, every time. The seed() method is used to initialize 
+		#the random number generator, which needs a number to start with (a seed value). This specified seed value, such as “1”, ensures 
+		#that the same sequence of random numbers is generated each time the code is run.
+batch_size = 4   #The training is performed in batches of four images. This means that four images are forward fed into the network and then the 
+		 #gradient is computed. Training a network with batches helps in reducing training time to the detriment of the accuracy. In this 
+		 #specific case we have about 1000 images, which is not a huge number to train this network. So, mini-batches of four images is an 
+		 #optimal value to accelerate the training. If you have a different number of training images try to change the size of the mini-batch.
+img_height = 650  #A CNN requires a fixed input image size. This is the image size that gave us the best accuracy results with our training dataset. 
+    		  #If you have your own dataset you can try other image sizes to study how the accuracy varies with the image dimension. You can increase 
+		  #the image size and improve the image resolution, but paying attention to the limits of the GPUs RAM.
 img_width = 650
-img_channels = 3  #This is number of channels of the images. Mammographic exams are grayscale images and, therefore, they have only one channel. However, Resnet models are fine-tuned for using 3 channels, because they are designed to work on RGB images. When you set the number of channels to 3, the conversion from 1 to 3 channels is done automatically by the ImageDataGenerator class provided by Keras at training time, by identically repeating the same pixel value in all 3 channels. In other words, the image is a tensor composed of 3 identical 2D matrices.
+img_channels = 3  #This is number of channels of the images. Mammographic exams are grayscale images and, therefore, they have only one channel. However, 
+		  #Resnet models are fine-tuned for using 3 channels, because they are designed to work on RGB images. When you set the number of channels 
+		  #to 3, the conversion from 1 to 3 channels is done automatically by the ImageDataGenerator class provided by Keras at training time, 
+		  #by identically repeating the same pixel value in all 3 channels. In other words, the image is a tensor composed of 3 identical 2D matrices.
 
 #
 # network params
@@ -54,7 +66,8 @@ def residual_network(x):
 
         """
 	    Defines a couple of subsequent layers frequently used through the model.
-	    Batch normalization applies a transformation that maintains the mean output close to 0 and the output standard deviation close to 1. The input is a tensor, the output is a tensor of same 		    shape as input.
+	    Batch normalization applies a transformation that maintains the mean output close to 0 and the output standard deviation close to 1. 
+	    The input is a tensor, the output is a tensor of same shape as input.
 	    LeakyReLU is the activation function. The default slope coefficient is set to 0.3.
 
 	    Parameters
@@ -103,7 +116,10 @@ def residual_network(x):
 	    - If producing spatial maps of the same size, the blocks share the same hyper-parameters (width and filter sizes).
 	    - Each time the spatial map is down-sampled by a factor of 2, the width of the blocks is multiplied by a factor of 2.
 
-	    The input of each of the residual block is shared by two branches: in the first, it passes through several convolutional, batch normalization, activation and max pooling layers while in 		    the other branch it passes through a convolutional layer and a batch normalization only. The outputs of these two branches are then added together to constitute the residual block and then 		    LeakyReLu is performed on the the output of the residual block.
+	    The input of each of the residual block is shared by two branches: in the first, it passes through several convolutional,
+	    batch normalization, activation and max pooling layers while in the other branch it passes through a convolutional layer 
+	    and a batch normalization only. The outputs of these two branches are then added together to constitute the residual block and then 		    
+	    LeakyReLu is performed on the the output of the residual block.
 
         """
         shortcut = y
@@ -139,11 +155,14 @@ def residual_network(x):
     # Now we can use the defined functions "add_common_layers" and "residual_block" to build the architecture of our ResNet model.
 
     # conv1
-    x = layers.Conv2D(64, kernel_size=(3, 3), strides=(2, 2), padding='same')(x)   #The first 2D Convolution has 64 filters of shape (3,3) and uses a stride of (2,2). Its name is "conv1".
+    x = layers.Conv2D(64, kernel_size=(3, 3), strides=(2, 2), padding='same')(x)   #The first 2D Convolution has 64 filters of shape (3,3) 
+										   #and uses a stride of (2,2). Its name is "conv1".
     x = add_common_layers(x)
 
     # conv2
-    x = layers.MaxPool2D(pool_size=(3, 3), strides=(2, 2), padding='same')(x)   #MaxPooling on the output of conv1. It uses a (3,3) window and a (2,2) stride. The resulting output shape when using the 											"same" padding option is: output_shape = input_shape / strides.
+    x = layers.MaxPool2D(pool_size=(3, 3), strides=(2, 2), padding='same')(x)   #MaxPooling on the output of conv1. It uses a (3,3) window 
+										#and a (2,2) stride. The resulting output shape when using the 
+										#"same" padding option is: output_shape = input_shape / strides.
     for i in range(3):
         project_shortcut = True if i == 0 else False
         x = residual_block(x, 64, 128, _project_shortcut=project_shortcut)    #1st residual block
@@ -166,9 +185,12 @@ def residual_network(x):
     
     x = Dropout(0.2)(x)    #Dropout layer with rate (fraction of the input units to drop) set to 0.2. You can try with a different dropout rate.
 
-    x = layers.GlobalAveragePooling2D()(x)    #Global Average Pooling layer that calculates the average output of each feature map in the previous layer. In this case the output size is (1, 256).
+    x = layers.GlobalAveragePooling2D()(x)    #Global Average Pooling layer that calculates the average output of each feature map in the previous layer. 
+					      #In this case the output size is (1, 256).
   
-    x = layers.Dense(4, activation = 'softmax')(x)  #Dense layer with 4 units and with Softmax as activation function. The input is the output tensor of the GAP layer. The output is a tensor of size (1, 							     4) whose elements are float32 and they are the probabilities of each of the four classes.
+    x = layers.Dense(4, activation = 'softmax')(x)  #Dense layer with 4 units and with Softmax as activation function. The input is the output tensor 
+						    #of the GAP layer. The output is a tensor of size (1,4) whose elements are float32 and they are 
+						    #the probabilities of each of the four classes.
 
     return x
 
@@ -177,7 +199,8 @@ if __name__ == '__main__':
     image_tensor = layers.Input(shape=(img_height, img_width, img_channels))   #We instantiate a Keras tensor as input of the network.
     network_output = residual_network(image_tensor)    
 	  
-    model = models.Model(inputs=[image_tensor], outputs=[network_output])   #Once instantiated the model architecture and the input, we can create the model with this class that groups layers into an object 										 with training and inference features.
+    model = models.Model(inputs=[image_tensor], outputs=[network_output])   #Once instantiated the model architecture and the input, we can create 
+									    #the model with this class that groups layers into an object 										    #with training and inference features.
     print(model.summary())    #We print a summary of the created model, with the output size and the number of parameters for each layer.
 	    
 
@@ -187,11 +210,13 @@ if __name__ == '__main__':
 	# definition of callbacks
 
     reduce_lr_val = ReduceLROnPlateau(monitor='val_loss', factor=0.1,              
-		           patience=15, min_lr=0.001, verbose = 1)          ##This callback monitors a quantity and if no improvement is seen for a 'patience' number of epochs, the learning rate is reduced by a 										certain factor until a minimum value.
+		           patience=15, min_lr=0.001, verbose = 1)          #This callback monitors a quantity and if no improvement is seen for 
+									    #a 'patience' number of epochs, the learning rate is reduced by a 										    #certain factor until a minimum value.
 		   
 
     filepath="CC_R_model/weights-improvement-{epoch:02d}-{val_acc:.2f}.h5"         #Path to save the model file
-    checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')                          #Callback to save the Keras model or model weights at some frequency.
+    checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')     #Callback to save the Keras model 
+													      #or model weights at some frequency.
     callbacks_list = [checkpoint]
 
     def on_epoch_end(self, epoch, logs=None):
@@ -202,14 +227,18 @@ if __name__ == '__main__':
 
 	# definition of the inputs via ImageDataGenerator
 
-    train_datagen = ImageDataGenerator(              #The built-in class ImageDataGenerator generates batches of tensor image data with real-time data augmentation each time the data are looped over, which 							   means that images are randomly augmented at runtime. This class also allows defining the image normalization (rescale).
+    train_datagen = ImageDataGenerator(              #The built-in class ImageDataGenerator generates batches of tensor image data with real-time
+						     #data augmentation each time the data are looped over, which means that images are randomly 
+						     #augmented at runtime. This class also allows defining the image normalization (rescale).
 		rescale=1./255,
 		zoom_range=0.2,
 		samplewise_center = True,
 		width_shift_range=0.2,
 		height_shift_range=0.2,
 		rotation_range=10,
-		horizontal_flip=False)                   #We set the horizontal flip option to false because we train the model on a single projection at a time. So, by flipping the image horizontally we obtain 							  another view. You can try a different data augmentation by changing the other class arguments.
+		horizontal_flip=False)        #We set the horizontal flip option to false because we train the model on a single projection at a time.
+					      #So, by flipping the image horizontally we obtain another view. You can try a different data augmentation 
+					      #by changing the other class arguments.
 
 
     val_datagen = ImageDataGenerator(
@@ -217,33 +246,40 @@ if __name__ == '__main__':
 		rescale=1./255)
 	   
 
-    train_generator = train_datagen.flow_from_directory(                                            #Takes the path to a directory and generates batches of augmented data.
-		'/TrainingSet/CC_R/train',   #Insert your own path to the directory containing the training set of images of the selected projection. This 													model is trained on a single projection at a time. In this example we train the model on the CC_R 													projection. Then train the model separately on the other projections (CC_L, MLO_R, MLO_L). 										
+    train_generator = train_datagen.flow_from_directory(                       #Takes the path to a directory and generates batches of augmented data.
+		'/TrainingSet/CC_R/train',      #Insert your own path to the directory containing the training set of images of the selected projection.
+						#This model is trained on a single projection at a time. In this example we train the model on the CC_R 
+						#projection. Then train the model separately on the other projections (CC_L, MLO_R, MLO_L). 										
 		batch_size = batch_size,
 		target_size=(img_width, img_height),
-		color_mode = 'rgb',     #If you set the number of channels to 3, you have to set color_mode ='rgb', when you use 1 single channel, you have to set color_mode = 'grayscale'.
+		color_mode = 'rgb',     #If you set the number of channels to 3, you have to set color_mode ='rgb', when you use 1 single channel, 
+					#you have to set color_mode = 'grayscale'.
 		shuffle = True,
 		class_mode='categorical')
 
     validation_generator = val_datagen.flow_from_directory(
-		'/ValidationSet/CC_R/validation', #Insert your own path to the directory containing the validation set of images of the selected projection (e.g.CC_R)
+		'/ValidationSet/CC_R/validation',     #Insert your own path to the directory containing the validation set of images of the
+						      #selected projection (e.g.CC_R)
 		batch_size = batch_size,
 		target_size=(img_width, img_height),
 		color_mode = 'rgb',
 		shuffle = True,
 		class_mode='categorical')
 
-    tensorboard = TensorBoard(log_dir="CC_R_model/logs/{}".format(time()), histogram_freq=0, batch_size=4, write_grads=True, write_images=True)   #This is 															optional. It enables visualizations for TensorBoard, a visualization tool provided with 															TensorFlow. It could be useful to visualize the model graph to check that the 																trained model’s structure matches our intended design, if the layers are built 																correctly and the shapes of inputs and outputs of the nodes are those expected. 															Insert tensorboard as callback in model.fit_generator. After training, if you have 																installed TensorFlow with pip, you should be able to launch TensorBoard from the 																command line: tensorboard --logdir=path_to_your_logs
+    tensorboard = TensorBoard(log_dir="CC_R_model/logs/{}".format(time()), histogram_freq=0, batch_size=4, write_grads=True, write_images=True)   #This is optional.
+                                                                                     #It enables visualizations for TensorBoard, a visualization tool provided with 											     #TensorFlow. It could be useful to visualize the model graph to check that the 											     #trained model’s structure matches our intended design, if the layers are built 											     #correctly and the shapes of inputs and outputs of the nodes are those expected. 											     #Insert tensorboard as callback in model.fit_generator. After training, if you have 											     #installed TensorFlow with pip, you should be able to launch TensorBoard from the 											     #command line: tensorboard --logdir=path_to_your_logs
 
     model.compile(optimizer='sgd',                    #Configures the model for training.
 		      loss='categorical_crossentropy',
 		      metrics=['accuracy'])
 
     history = model.fit_generator(train_generator,    #Fits the model on data yielded batch-by-batch by a Python generator.
-		  steps_per_epoch=227,           #It is the ratio between the number of images in the training set and the batch size. Approximated to the nearest integer by default.
+		  steps_per_epoch=227,           #It is the ratio between the number of images in the training set and the batch size. 
+						 #Approximated to the nearest integer by default.
 		  epochs = 100,
 		  validation_data=validation_generator,
-		  validation_steps=38,              #It is the ratio between the number of images in the validation set and the batch size. Approximated to the nearest integer by default.
+		  validation_steps=38,              #It is the ratio between the number of images in the validation set and the batch size.
+						    #Approximated to the nearest integer by default.
 		  callbacks=[reduce_lr_val, checkpoint, tensorboard])
 
 
