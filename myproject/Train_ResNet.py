@@ -33,7 +33,7 @@ img_height = 650  #A CNN requires a fixed input image size. This is the image si
     		  #If you have your own dataset you can try other image sizes to study how the accuracy varies with the image dimension. You can increase 
 		  #the image size and improve the image resolution, but paying attention to the limits of the GPUs RAM.
 img_width = 650
-img_channels = 3  #This is number of channels of the images. Mammographic exams are grayscale images and, therefore, they have only one channel. However, 
+img_channels = 3  #This is the number of channels of the images. Mammographic exams are grayscale images and, therefore, they have only one channel. However, 
 		  #Resnet models are fine-tuned for using 3 channels, because they are designed to work on RGB images. When you set the number of channels 
 		  #to 3, the conversion from 1 to 3 channels is done automatically by the ImageDataGenerator class provided by Keras at training time, 
 		  #by identically repeating the same pixel value in all 3 channels. In other words, the image is a tensor composed of 3 identical 2D matrices.
@@ -124,7 +124,6 @@ def residual_network(x):
         """
         shortcut = y
 
-        # we modify the residual building block as a bottleneck design to make the network more economical
         y = layers.Conv2D(nb_channels_in, kernel_size=(1, 1), strides=(1, 1), padding='same')(y)
         y = add_common_layers(y)
 
@@ -211,7 +210,8 @@ if __name__ == '__main__':
 
     reduce_lr_val = ReduceLROnPlateau(monitor='val_loss', factor=0.1,              
 		           patience=15, min_lr=0.001, verbose = 1)          #This callback monitors a quantity and if no improvement is seen for 
-									    #a 'patience' number of epochs, the learning rate is reduced by a 										    #certain factor until a minimum value.
+									    #a 'patience' number of epochs, the learning rate is reduced by a 
+									    #certain factor until a minimum value.
 		   
 
     filepath="CC_R_model/weights-improvement-{epoch:02d}-{val_acc:.2f}.h5"         #Path to save the model file
@@ -267,7 +267,13 @@ if __name__ == '__main__':
 		class_mode='categorical')
 
     tensorboard = TensorBoard(log_dir="CC_R_model/logs/{}".format(time()), histogram_freq=0, batch_size=4, write_grads=True, write_images=True)   #This is optional.
-                                                                                     #It enables visualizations for TensorBoard, a visualization tool provided with 											     #TensorFlow. It could be useful to visualize the model graph to check that the 											     #trained model’s structure matches our intended design, if the layers are built 											     #correctly and the shapes of inputs and outputs of the nodes are those expected. 											     #Insert tensorboard as callback in model.fit_generator. After training, if you have 											     #installed TensorFlow with pip, you should be able to launch TensorBoard from the 											     #command line: tensorboard --logdir=path_to_your_logs
+											#It enables visualizations for TensorBoard, a visualization tool provided with 
+											#TensorFlow. It could be useful to visualize the model graph to check that the 
+											#trained model’s structure matches our intended design, if the layers are built
+										        #correctly and the shapes of inputs and outputs of the nodes are those expected. 
+											#Insert tensorboard as callback in model.fit_generator. After training, if you have
+										        #installed TensorFlow with pip, you should be able to launch TensorBoard from the
+										        #command line: tensorboard --logdir=path_to_your_logs
 
     model.compile(optimizer='sgd',                    #Configures the model for training.
 		      loss='categorical_crossentropy',
