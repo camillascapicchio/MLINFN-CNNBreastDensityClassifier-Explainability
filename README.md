@@ -32,7 +32,10 @@ In the folder “myproject” you can find all the useful scripts:
 
 2) The second script in python Prediction_ResNet.py is to test the model. It can also be run locally on a common hardware but paying attention to use the same virtual environment used for the training, because you need the same version of the packages to be sure that the algorithm is compatible and reliable.
 
-3-4) The third and fourth scripts Figure_merit.ipynb and ClassActivationMaps.ipynb are Jupiter notebooks, the first is to obtain the figures of merit, the second to generate the Class Activation Maps. They can be run on Google CoLab or you can clone the GitHub repo and execute the notebook locally.
+3) The third script Figure_merit.ipynb is a Jupiter notebook, it is to obtain the figures of merit and evaluate the model performance. It can be run on Google CoLab or you can clone the GitHub repo and execute the notebook locally.
+
+4) The fourth script ClassActivationMaps.ipynb is a Jupiter notebook, it is to generate the Class Activation Maps. It can be run on Google CoLab or you can clone the GitHub repo and execute the notebook locally.
+
 
 The software package is designed for a double purpose:
 
